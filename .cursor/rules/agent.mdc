@@ -1,6 +1,6 @@
 ---
-description:
-globs: examples/**/*.ts
+description: 
+globs: writers/**/*.ts
 alwaysApply: false
 ---
 # AIGNE Framework Cookbook
