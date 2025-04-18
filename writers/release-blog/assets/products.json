@@ -1,0 +1,75 @@
+[
+  {
+    "title": "Discuss Kit",
+    "repo": "blocklet/discuss-kit",
+    "store": "https://store.blocklet.dev/blocklets/z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu",
+    "docs": "",
+    "website": "https://www.blocklet.io/en/discuss-kit",
+    "audience": "content creators, community managers",
+    "community": "https://community.arcblock.io/discussions/boards/discuss-kit"
+  },
+  {
+    "title": "Pages Kit",
+    "repo": "blocklet/pages-kit",
+    "store": "https://store.blocklet.dev/blocklets/z8iZiDFg3vkkrPwsiba1TLXy3H9XHzFERsP8o",
+    "docs": "",
+    "website": "https://www.web3kit.rocks/en/pages-kit",
+    "audience": "content creators",
+    "community": "https://community.arcblock.io/discussions/boards/pages-kit"
+  },
+  {
+    "title": "Payment Kit",
+    "repo": "blocklet/payment-kit",
+    "store": "https://store.blocklet.dev/blocklets/z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk",
+    "docs": "https://www.arcblock.io/docs/arcblock-payment-kit/",
+    "website": "https://www.blocklet.io/en/payment-kit",
+    "audience": "developers, content creators",
+    "community": "https://community.arcblock.io/discussions/boards/payment-kit"
+  },
+  {
+    "title": "DID Spaces",
+    "repo": "arcblock/did-spaces",
+    "store": "https://store.blocklet.dev/blocklets/z8iZnaYxnkMD5AKRjTKiCb8pQr1ut8UantAcf",
+    "docs": "https://www.arcblock.io/docs/did-spaces/",
+    "website": "https://www.didspaces.com",
+    "audience": "consumers",
+    "community": "https://community.arcblock.io/discussions/boards/did-spaces"
+  },
+  {
+    "title": "Blocklet Store",
+    "repo": "blocklet/blocklet-store",
+    "store": "https://store.blocklet.dev/blocklets/z8ia29UsENBg6tLZUKi2HABj38Cw1LmHZocbQ",
+    "docs": "https://www.arcblock.io/docs/blocklet-store",
+    "website": "https://store.blocklet.dev",
+    "audience": "consumers, developers",
+    "community": "https://community.arcblock.io/discussions/boards/blocklet-platform"
+  },
+  {
+    "title": "Blocklet Launcher",
+    "repo": "blocklet/launcher",
+    "store": "https://test.store.blocklet.dev/blocklets/z8iZkFBbrVQxZHvcWWB3Sa2TrfGmSeFz9MSU7",
+    "docs": "https://www.arcblock.io/docs/launcher/",
+    "website": "https://launcher.arcblock.io",
+    "audience": "consumers, developers",
+    "community": "https://community.arcblock.io/discussions/boards/blocklet-platform"
+  },
+  {
+    "title": "DID Names",
+    "repo": "blocklet/did-services",
+    "store": "https://test.store.blocklet.dev/blocklets/z2qaGosS3rZ7m5ttP3Nd4V4qczR9TryTcRV4p",
+    "docs": "https://www.arcblock.io/docs/did-domain",
+    "website": "https://www.didnames.io",
+    "audience": "domain holders, website masters",
+    "community": "https://community.arcblock.io/discussions/boards/blocklet-platform"
+  },
+  {
+    "title": "Blocklet Server",
+    "repo": "arcblock/blocklet-server",
+    "store": "https://www.npmjs.com/package/@blocklet/cli",
+    "docs": "https://www.arcblock.io/docs/blocklet-developer",
+    "website": "https://www.arcblock.io/content/collections/en/blocklet-server",
+    "community": "https://community.arcblock.io/discussions/boards/blocklet-platform",
+    "audience": "developers, website masters",
+    "private": true
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "name": "@aigne/release-blog-writer",
+  "version": "1.5.0",
+  "description": "AIGNE based content writer for release blog",
+  "author": "Arcblock <blocklet@arcblock.io> https://github.com/blocklet",
+  "homepage": "https://github.com/arcblock/aigne-writers/tree/main/examples/release-blog-writer",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arcblock/aigne-writers"
+  },
+  "bin": "index.ts",
+  "files": [
+    ".env.local.example",
+    "*.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "npx -y bun run index.ts",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aigne/core": "^1.8.0",
+    "@lexical/code": "^0.30.0",
+    "@lexical/headless": "^0.30.0",
+    "@lexical/html": "^0.30.0",
+    "@lexical/link": "^0.30.0",
+    "@lexical/rich-text": "^0.30.0",
+    "@lexical/table": "^0.30.0",
+    "@octokit/rest": "^20.1.1",
+    "@uppy/core": "^4.4.4",
+    "@uppy/xhr-upload": "^4.3.3",
+    "axios": "^1.8.4",
+    "dotenv": "^16.5.0",
+    "jsdom": "^26.1.0",
+    "lexical": "^0.30.0",
+    "lodash": "^4.17.21",
+    "marked": "^15.0.8",
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-to-markdown": "^2.1.2",
+    "openai": "^4.93.0",
+    "p-limit": "^6.2.0",
+    "semver": "^7.5.4",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7"
+  }
+}

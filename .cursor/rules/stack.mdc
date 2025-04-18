@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- This repo uses `pnpm` to manage dependencies, and `pnpm workspaces` is used for inner repo dependencies
+- This repo uses `biome` for formatting and linting, run `pnpm lint:fix` to format code
+- This repo uses `bun` to run scripts or examples, please do not use `node`

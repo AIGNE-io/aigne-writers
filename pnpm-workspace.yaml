@@ -1,0 +1,4 @@
+packages:
+  - writers/*
+onlyBuiltDependencies:
+  - simple-git-hooks
