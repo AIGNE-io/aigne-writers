@@ -13,11 +13,11 @@ import { converter } from "./agents/converter.js";
 import { writer } from "./agents/writer.js";
 import { downloader } from "./agents/downloader/index.js";
 import { uploader } from "./agents/uploader/index.js";
+import { authenticator } from "./agents/authenticator/index.js";
 
-const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_ACCESS_TOKEN, BLOCKLET_APP_URL } = process.env;
+const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL } = process.env;
 assert(OPENAI_API_KEY, "Please set the OPENAI_API_KEY environment variable");
 assert(GITHUB_TOKEN, "Please set the GITHUB_TOKEN environment variable");
-assert(BLOCKLET_ACCESS_TOKEN, "Please set the BLOCKLET_ACCESS_TOKEN environment variable");
 assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable");
 
 const claude = new OpenAIChatModel({
@@ -46,6 +46,8 @@ const length = "800~1200";
 const appUrl = BLOCKLET_APP_URL;
 const concurrency = 5;
 const shouldPublish = true;
+
+const { accessToken } = await engine.call(authenticator, { appUrl });
 
 for (const repo of repos) {
   const data = await engine.call(collector, {
@@ -115,6 +117,7 @@ for (const repo of repos) {
     // Publish the blog post to the Discuss Kit
     const published = await publisher.call({
       appUrl,
+      accessToken: accessToken as string,
       post: {
         title: converted.title,
         content: JSON.stringify(converted.content),
@@ -139,10 +142,11 @@ for (const repo of repos) {
 
   // Upload media files
   const uploaded = await engine.call(uploader, {
-    appUrl: process.env.BLOCKLET_APP_URL as string,
+    appUrl,
     mediaFolder: join(process.cwd(), "output/downloads", repo.toLowerCase()),
     mediaUrls: data.pulls?.flatMap((pull: any) => pull.mediaFiles),
     concurrency,
+    accessToken: accessToken as string,
   });
   console.log("uploaded", uploaded);
 }

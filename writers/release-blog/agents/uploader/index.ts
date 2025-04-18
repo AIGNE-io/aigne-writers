@@ -18,6 +18,7 @@ const UploaderInputSchema = z.object({
     .positive()
     .default(5)
     .describe("Maximum number of concurrent uploads"),
+  accessToken: z.string().describe("The access token for the blocklet"),
 });
 
 // Define the output schema for the uploader agent
@@ -63,13 +64,8 @@ export const uploader = FunctionAgent.from({
       mediaFolder,
       mediaUrls,
       concurrency = 5,
+      accessToken,
     } = input;
-
-    const accessToken = process.env.BLOCKLET_ACCESS_TOKEN;
-
-    if (!accessToken) {
-      throw new Error("BLOCKLET_ACCESS_TOKEN environment variable is not set");
-    }
 
     // Create a map of filename to URL for quick lookup
     const urlMap = new Map<string, string>();

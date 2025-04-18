@@ -55,6 +55,7 @@ export const publisher = FunctionAgent.from({
     }),
     publishAs: z.enum(["blog", "discuss", "doc"]).default("blog"),
     appUrl: z.string(),
+    accessToken: z.string(),
   }),
   outputSchema: z.object({
     success: z.boolean(),
@@ -64,13 +65,10 @@ export const publisher = FunctionAgent.from({
   fn: async (input: {
     post: { title: string; content: string; locale?: string };
     appUrl: string;
+    accessToken: string;
   }): Promise<PublishResult> => {
     try {
-      if (!process.env.BLOCKLET_ACCESS_TOKEN) {
-        throw new Error("BLOCKLET_ACCESS_TOKEN is not set");
-      }
-
-      const { post, appUrl } = input;
+      const { post, appUrl, accessToken } = input;
 
       const url = new URL(appUrl);
       const mountPoint = await getComponentMountPoint(appUrl, "z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu");
@@ -85,7 +83,7 @@ export const publisher = FunctionAgent.from({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.BLOCKLET_ACCESS_TOKEN as string}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           title: post.title,
