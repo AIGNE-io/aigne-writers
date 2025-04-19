@@ -42,7 +42,7 @@ const repos = [
 ];
 
 const language = "Chinese";
-const length = "800~1200";
+const length = "1200";
 const appUrl = BLOCKLET_APP_URL;
 const concurrency = 5;
 const shouldPublish = true;
