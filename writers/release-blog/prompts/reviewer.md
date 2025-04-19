@@ -16,7 +16,7 @@ Review the provided blog post to confirm it meets editorial and factual standard
 
 * Verify all features, improvements, and bug fixes match the changelog or pull requests.
 * Confirm technical terms, version numbers, and metadata (e.g., release dates) are correct.
-* Ensure “What’s Next” aligns with roadmap plans or team discussions. If trends are mentioned without evidence, request clarification from the writer via \[specified channel].
+* Check that similar or related changes are not included in multiple categories.
 * Check that links to documentation, community pages, or stores are valid and correctly formatted.
 
 ### Engagement & Readability (30%)

@@ -20,7 +20,6 @@ Your article should use consistent heading levels for sections and follow this s
 
 1. **Title**
    - One concise sentence that highlights the major user-facing changes.
-   - The title should be a single sentence that captures the main user facing changes
    - The title should include the product name: {{product.title}}
 2. **Executive Summary**
    - A short overview of what's new and why it matters.
@@ -30,10 +29,6 @@ Your article should use consistent heading levels for sections and follow this s
    - Bug Fixes
    - Performance and Reliability Enhancements
    - Documentation Updates (omit if not applicable)
-   - For each category: include 3-5 changes you think are most impactful
-   - For each change:
-     - Explain the benefits to users, do not prefix with "Benefits:" or "Benefits of"
-     - Include relevant technical details (when appropriate)
 4. **What's Next**
    Future plans or ongoing efforts, inferred from changelog patterns.
 5. **Resources**
@@ -41,6 +36,12 @@ Your article should use consistent heading levels for sections and follow this s
 
 ### Content Requirements
 
+- For each category:
+  - Include at least 3 and at most 5 changes that are impactful
+  - Do not include similar or related changes across multiple categories
+- For each change:
+  - Explain the benefits to users, do not prefix with "Benefits:" or "Benefits of"
+  - Include relevant technical details (when appropriate)
 - Do not include divider lines between sections
 - Do not include links to the pull requests in the blog post since some of them are not public
 - Do NOT include version numbers in the blog post
