@@ -17,10 +17,8 @@ interface PublishResult {
 }
 
 export async function getComponentMountPoint(appUrl: string, did: string): Promise<string> {
-  // Step 1: Fetch the blocklet configuration to find the Discuss Kit mount point
   const url = new URL(appUrl);
   const blockletJsUrl = `${url.origin}/__blocklet__.js?type=json`;
-  console.log(`Fetching blocklet configuration from ${blockletJsUrl}`);
 
   const blockletJs = await fetch(blockletJsUrl, {
     method: "GET",
@@ -31,14 +29,14 @@ export async function getComponentMountPoint(appUrl: string, did: string): Promi
 
   if (!blockletJs.ok) {
     throw new Error(
-      `Failed to fetch blocklet configuration: ${blockletJs.status} ${blockletJs.statusText}`,
+      `Failed to fetch blocklet json: ${blockletJs.status} ${blockletJs.statusText}, ${blockletJsUrl}`,
     );
   }
 
   const config: BlockletConfig = await blockletJs.json();
   const component = config.componentMountPoints.find((component) => component.did === did);
   if (!component) {
-    throw new Error("Discuss Kit component not found in blocklet configuration");
+    throw new Error(`Component ${did} not found in blocklet: ${appUrl}`);
   }
 
   return component.mountPoint;

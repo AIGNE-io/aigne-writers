@@ -47,6 +47,7 @@ const appUrl = BLOCKLET_APP_URL;
 const concurrency = 5;
 const shouldPublish = true;
 
+// We just need to authenticate once
 const { accessToken } = await engine.call(authenticator, { appUrl });
 
 for (const repo of repos) {
@@ -127,14 +128,12 @@ for (const repo of repos) {
     console.log("published", published);
   }
 
-  console.log(
-    "mediaFiles",
-    data.pulls?.flatMap((pull: any) => pull.mediaFiles),
-  );
+  const mediaFiles = data.pulls?.flatMap((pull: any) => pull.mediaFiles);
+  console.log("mediaFiles", mediaFiles);
 
   // Download media files
   const downloaded = await engine.call(downloader, {
-    urls: data.pulls?.flatMap((pull: any) => pull.mediaFiles),
+    urls: mediaFiles,
     repoName: repo,
     concurrency,
   });
@@ -144,7 +143,7 @@ for (const repo of repos) {
   const uploaded = await engine.call(uploader, {
     appUrl,
     mediaFolder: join(process.cwd(), "output/downloads", repo.toLowerCase()),
-    mediaUrls: data.pulls?.flatMap((pull: any) => pull.mediaFiles),
+    mediaUrls: mediaFiles,
     concurrency,
     accessToken: accessToken as string,
   });
