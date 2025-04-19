@@ -1,5 +1,6 @@
 import { AIAgent, PromptBuilder } from "@aigne/core";
 import { z } from "zod";
+import { join } from "node:path";
 
 export const reviewer = AIAgent.from({
   inputSchema: z.object({
@@ -19,7 +20,7 @@ export const reviewer = AIAgent.from({
     changes: z.string(),
     pulls: z.string(),
   }),
-  instructions: await PromptBuilder.from({ path: "../prompts/reviewer.md" }),
+  instructions: await PromptBuilder.from({ path: join(__dirname, "../prompts/reviewer.md") }),
   outputSchema: z.object({
     approval: z.boolean().describe("APPROVE or REVISE"),
     feedback: z.object({

@@ -33,15 +33,15 @@ const engine = new ExecutionEngine({ model: claude });
 const repos = [
   // "blocklet/payment-kit",
   // "blocklet/discuss-kit",
-  "blocklet/pages-kit",
+  // "blocklet/pages-kit",
   // "blocklet/launcher",
   // "blocklet/blocklet-store",
   // "blocklet/did-services",
-  // "arcblock/did-spaces",
+  "arcblock/did-spaces",
   // "arcblock/blocklet-server",
 ];
 
-const language = "Chinese";
+const language = "English";
 const length = "1200";
 const appUrl = BLOCKLET_APP_URL;
 const concurrency = 5;

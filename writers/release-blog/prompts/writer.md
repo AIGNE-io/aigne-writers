@@ -19,19 +19,32 @@ Write a blog post based on the product context provided at the end of this promp
 Your article should use consistent heading levels for sections and follow this structure:
 
 1. **Title**
-   One concise sentence that highlights the major user-facing changes.
+   - One concise sentence that highlights the major user-facing changes.
+   - The title should be a single sentence that captures the main user facing changes
+   - The title should include the product name: {{product.title}}
 2. **Executive Summary**
-   A short overview of what's new and why it matters.
-3. **Feature Highlights** (group changes into logical categories, each category include at least 3 changes, at most 5 changes, highlight the most impactful changes):
+   - A short overview of what's new and why it matters.
+3. **Feature Highlights** (group changes into logical categories):
    - New Features
    - User Experience Improvements
    - Bug Fixes
-   - Performance Enhancements
+   - Performance and Reliability Enhancements
    - Documentation Updates (omit if not applicable)
+   - For each category: include 3-5 changes you think are most impactful
+   - For each change:
+     - Explain the benefits to users, do not prefix with "Benefits:" or "Benefits of"
+     - Include relevant technical details (when appropriate)
 4. **What's Next**
    Future plans or ongoing efforts, inferred from changelog patterns.
 5. **Resources**
    Add links to the documentation ({{product.docs}}), community ({{product.community}}), and product/store page ({{product.store}}).
+
+### Content Requirements
+
+- Do not include divider lines between sections
+- Do not include links to the pull requests in the blog post since some of them are not public
+- Do NOT include version numbers in the blog post
+- Use consistent heading levels for sections
 
 ---
 
@@ -66,6 +79,7 @@ Aim for a tone that is conversational, clear, and engaging — but not fluffy. Y
 ## WORDS & PHRASES TO AVOID
 
 Do **not** use promotional fluff or filler emotion. Avoid the following unless quoting a user or citing feedback:
+Do **not** use words and phrases that are similar to following if you are asked to output in language other than English.
 
 ### Emotion Words:
 
@@ -183,7 +197,6 @@ Before writing the blog article, follow these steps to ensure accuracy:
 - DO NOT invent metrics or statistics about the product
 - DO NOT make comparisons to competitors unless explicitly mentioned in the data
 - If the data is insufficient to write a complete blog post, focus on what is available rather than filling gaps with invented content
-- Do NOT include version numbers in the blog post
 
 ---
 

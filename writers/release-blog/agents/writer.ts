@@ -1,5 +1,6 @@
 import { AIAgent, PromptBuilder } from "@aigne/core";
 import { z } from "zod";
+import { join } from "node:path";
 
 export const writer = AIAgent.from({
   inputSchema: z.object({
@@ -21,6 +22,6 @@ export const writer = AIAgent.from({
     length: z.string().optional().default("800~1200"),
     language: z.string().optional().default("English"),
   }),
-  instructions: await PromptBuilder.from({ path: "../prompts/writer.md" }),
+  instructions: await PromptBuilder.from({ path: join(__dirname, "../prompts/writer.md") }),
   outputKey: "blog",
 });
