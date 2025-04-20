@@ -15,6 +15,7 @@ import { downloader } from "./agents/downloader/index.js";
 import { uploader } from "./agents/uploader/index.js";
 import { authenticator } from "./agents/authenticator/index.js";
 import { existsSync } from "node:fs";
+import { illustrator } from "./agents/illustrator.js";
 
 const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL } = process.env;
 assert(OPENAI_API_KEY, "Please set the OPENAI_API_KEY environment variable");
@@ -23,7 +24,7 @@ assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable")
 
 const appUrl = BLOCKLET_APP_URL;
 
-const claude = new OpenAIChatModel({
+const openai = new OpenAIChatModel({
   apiKey: OPENAI_API_KEY,
   model: "gpt-4o-mini",
   modelOptions: {
@@ -31,7 +32,7 @@ const claude = new OpenAIChatModel({
   },
 });
 
-const engine = new ExecutionEngine({ model: claude });
+const engine = new ExecutionEngine({ model: openai });
 
 const repos = [
   // "blocklet/payment-kit",
@@ -167,11 +168,21 @@ for (const repo of repos) {
 
   const dataFile = join(__dirname, "output", `${data.cacheKey}.json`);
   const markdownFile = join(__dirname, "output", `${data.cacheKey}.md`);
+  const illustratedFile = join(__dirname, "output", `${data.cacheKey}-illustrated.md`);
 
   const [markdown] = await Promise.all([
     processPost(data, repo, markdownFile, useCache),
     processMediaFiles(data, repo, dataFile),
   ]);
+
+  const result = await engine.call(illustrator, {
+    blog: markdown,
+    data: JSON.stringify(JSON.parse(await readFile(dataFile, "utf-8"))),
+  });
+  if (result.illustrated) {
+    await writeFile(illustratedFile, result.illustrated as string);
+    console.log(`Illustrated blog saved to ${illustratedFile}`);
+  }
 
   if (shouldPublish) {
     // Convert the blog post to Lexical Editor JSON representation

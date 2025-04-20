@@ -3,6 +3,8 @@ import { z } from "zod";
 import { join } from "node:path";
 
 export const reviewer = AIAgent.from({
+  name: "reviewer",
+  description: "Review a blog post about a product release",
   inputSchema: z.object({
     blog: z.string(),
     product: z.object({
