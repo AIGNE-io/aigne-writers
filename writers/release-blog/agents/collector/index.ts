@@ -58,7 +58,7 @@ export const collector = FunctionAgent.from({
         mergedAt: z.string(),
         author: z.string(),
         description: z.string(),
-        mediaFiles: z.array(z.string()),
+        mediaFiles: z.array(z.any()),
         links: z.object({
           community: z.array(z.string()),
           github: z.array(z.string()),

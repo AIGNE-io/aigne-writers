@@ -1,7 +1,7 @@
 #!/usr/bin/env npx -y bun
 
 import assert from "node:assert";
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ExecutionEngine } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
@@ -45,8 +45,8 @@ const language = "English";
 const length = "1200";
 const appUrl = BLOCKLET_APP_URL;
 const concurrency = 5;
-const shouldPublish = true;
-const shouldUpload = false;
+const shouldPublish = false;
+const shouldUpload = true;
 
 // We just need to authenticate once
 const { accessToken } = await engine.call(authenticator, { appUrl });
@@ -54,11 +54,14 @@ const { accessToken } = await engine.call(authenticator, { appUrl });
 for (const repo of repos) {
   const data = await engine.call(collector, {
     repo,
-    days: repo === "arcblock/blocklet-server" ? 30 : 30,
-    endDate: "2025-04-17",
+    days: repo === "arcblock/blocklet-server" ? 20 : 30,
+    endDate: "2025-04-18",
     useCache: true,
   });
   // console.log('collector', data);
+
+  const dataFile = join(__dirname, "output", `${data.cacheKey}.json`);
+  const markdownFile = join(__dirname, "output", `${data.cacheKey}.md`);
 
   if (shouldPublish) {
     // Generate initial blog post
@@ -108,8 +111,8 @@ for (const repo of repos) {
     }
 
     // Save the final blog post
-    await writeFile(join(__dirname, "output", `${data.cacheKey}.md`), finalized);
-    console.log(`Blog saved to ${join(__dirname, "output", `${data.cacheKey}.md`)}`);
+    await writeFile(markdownFile, finalized);
+    console.log(`Blog saved to ${markdownFile}`);
 
     // Convert the blog post to Lexical Editor JSON representation
     const converted = await engine.call(converter, {
@@ -130,8 +133,10 @@ for (const repo of repos) {
   }
 
   if (shouldUpload) {
-    const mediaFiles = data.pulls?.flatMap((pull: any) => pull.mediaFiles);
-    console.log("mediaFiles", mediaFiles);
+    const mediaFiles = data.pulls?.flatMap((pull: any) =>
+      pull.mediaFiles.filter((x: any) => typeof x === "string"),
+    );
+    console.log("media files", mediaFiles);
 
     // Download media files
     const downloaded = await engine.call(downloader, {
@@ -139,16 +144,32 @@ for (const repo of repos) {
       repoName: repo,
       concurrency,
     });
-    console.log("downloaded", downloaded);
+    console.log("media files downloaded", downloaded);
 
     // Upload media files
     const uploaded = await engine.call(uploader, {
       appUrl,
       mediaFolder: join(process.cwd(), "output/downloads", repo.toLowerCase()),
-      mediaUrls: mediaFiles,
+      mediaFiles: mediaFiles,
       concurrency,
       accessToken: accessToken as string,
     });
-    console.log("uploaded", uploaded);
+    console.log("media files uploaded", uploaded);
+
+    // Update the pull requests with the uploaded media files
+    const json = await readFile(dataFile, "utf-8");
+    const parsed = JSON.parse(json);
+    for (const pull of parsed.pulls) {
+      pull.mediaFiles = pull.mediaFiles.filter(Boolean);
+      pull.mediaFiles.forEach((file: any, index: number) => {
+        const uploadedFileIndex = uploaded.results.findIndex((x: any) => x.originalUrl === file);
+        if (uploadedFileIndex !== -1) {
+          pull.mediaFiles[index] = uploaded.results[uploadedFileIndex];
+          pull.mediaFiles[index].diskUrl = undefined;
+        }
+      });
+    }
+    await writeFile(dataFile, JSON.stringify(parsed, null, 2));
+    console.log(`Pull requests updated: ${dataFile}`);
   }
 }

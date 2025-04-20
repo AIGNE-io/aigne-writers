@@ -9,7 +9,7 @@ import { getComponentMountPoint } from "../publisher.js";
 const UploaderInputSchema = z.object({
   appUrl: z.string().url().describe("The website URL to upload files to"),
   mediaFolder: z.string().describe("The folder containing media files to upload"),
-  mediaUrls: z
+  mediaFiles: z
     .array(z.string().url())
     .describe("List of media file URLs to match with local files"),
   concurrency: z
@@ -23,84 +23,65 @@ const UploaderInputSchema = z.object({
 
 // Define the output schema for the uploader agent
 const UploaderOutputSchema = z.object({
-  success: z.array(
+  results: z.array(
     z.object({
-      localFile: z.string(),
-      remoteUrl: z.string(),
-      status: z.literal("success"),
-    }),
-  ),
-  failed: z.array(
-    z.object({
-      localFile: z.string(),
-      error: z.string(),
-      status: z.literal("failed"),
-    }),
-  ),
+      originalUrl: z.string().url().describe("The original URL from mediaFiles input"),
+      diskUrl: z.string().describe("The path to local disk file"),
+      url: z.string().describe("The URL of the uploaded image on the website"),
+    })
+  )
 });
 
 // Define types for the upload results
-type UploadSuccess = {
-  localFile: string;
-  remoteUrl: string;
-  status: "success";
-};
-
-type UploadFailure = {
-  localFile: string;
-  error: string;
-  status: "failed";
+type UploadResult = {
+  originalUrl: string;
+  diskUrl: string;
+  url: string;
 };
 
 // Create the uploader agent
 export const uploader = FunctionAgent.from({
   name: "uploader",
-  description: "Uploads media files to Media Kit using TUS protocol",
+  description: "Uploads media files from github pull requests to Media Kit",
   inputSchema: UploaderInputSchema,
   outputSchema: UploaderOutputSchema,
   fn: async (input) => {
     const {
       appUrl,
       mediaFolder,
-      mediaUrls,
+      mediaFiles,
       concurrency = 5,
       accessToken,
     } = input;
 
     // Create a map of filename to URL for quick lookup
     const urlMap = new Map<string, string>();
-    for (const url of mediaUrls) {
+    for (const url of mediaFiles) {
       const filename = path.basename(url);
       urlMap.set(filename, url);
-      console.log(`Mapped URL: ${url} to filename: ${filename}`);
     }
 
     // Get all files in the media folder
     const files = fs.readdirSync(mediaFolder);
-    console.log(`Found ${files.length} files in media folder:`, files);
 
     // Filter files that match the URLs
     const filesToUpload = files.filter((file) => {
       // Extract the base filename without extension
       const baseFilename = path.basename(file, path.extname(file));
       const isMatch = urlMap.has(baseFilename);
-      console.log(`Checking file: ${file}, baseFilename: ${baseFilename}, match: ${isMatch}`);
       return isMatch;
     });
-
     console.log(`Files to upload: ${filesToUpload.length}`, filesToUpload);
 
+    // Initialize results array with all original URLs
+    const results: UploadResult[] = mediaFiles.map(url => ({
+      originalUrl: url,
+      diskUrl: "",
+      url: ""
+    }));
+
     if (filesToUpload.length === 0) {
-      return {
-        success: [],
-        failed: [
-          {
-            localFile: "none",
-            error: "No matching files found in the media folder",
-            status: "failed",
-          },
-        ],
-      };
+      return { results };
     }
 
     const url = new URL(appUrl);
@@ -117,9 +98,14 @@ export const uploader = FunctionAgent.from({
         const filePath = path.join(mediaFolder, file);
         // Extract the base filename without extension to match with URL
         const baseFilename = path.basename(file, path.extname(file));
-        const remoteUrl = urlMap.get(baseFilename);
+        const originalUrl = urlMap.get(baseFilename);
 
-        console.log(`Processing file: ${file}, baseFilename: ${baseFilename}, remoteUrl: ${remoteUrl}`);
+        if (!originalUrl) {
+          console.error(`No matching URL found for file: ${file}`);
+          return null;
+        }
+
+        console.log(`Processing file: ${file}, baseFilename: ${baseFilename}, originalUrl: ${originalUrl}`);
 
         try {
           // Get file stats for size
@@ -211,44 +197,49 @@ export const uploader = FunctionAgent.from({
             },
             body: fileBuffer
           });
-
           if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
             throw new Error(`Failed to upload file: ${uploadResponse.status} ${uploadResponse.statusText}\n${errorText}`);
           }
 
-          console.log(`File ${file} uploaded successfully`);
+          // Get the uploaded file URL from the response JSON
+          const uploadResult = await uploadResponse.json();
+          const uploadedFileUrl = uploadResult.url;
+          if (!uploadedFileUrl) {
+            throw new Error('No URL found in the upload response');
+          }
+          console.log(`File ${file} uploaded successfully: ${uploadedFileUrl}`);
+
+          // Update the result for this file
+          const resultIndex = results.findIndex(r => r.originalUrl === originalUrl);
+          if (resultIndex !== -1) {
+            results[resultIndex] = {
+              originalUrl,
+              diskUrl: filePath,
+              url: uploadedFileUrl
+            };
+          }
+
           return {
-            localFile: file,
-            remoteUrl: uploadUrl,
-            status: "success" as const,
+            originalUrl,
+            diskUrl: filePath,
+            url: uploadedFileUrl
           };
         } catch (error) {
           console.error(`Error uploading ${file}:`, error);
           return {
-            localFile: file,
-            error: error instanceof Error ? error.message : String(error),
-            status: "failed" as const,
+            originalUrl,
+            diskUrl: filePath,
+            url: ""
           };
         }
       }),
     );
 
     // Wait for all uploads to complete
-    const results = await Promise.all(uploadPromises);
+    await Promise.all(uploadPromises);
 
-    // Separate successful and failed uploads
-    const success = results.filter(
-      (result): result is UploadSuccess => result.status === "success",
-    );
-    const failed = results.filter(
-      (result): result is UploadFailure => result.status === "failed",
-    );
-
-    return {
-      success,
-      failed,
-    };
+    return { results };
   },
 });
 
@@ -291,7 +282,7 @@ function getMimeType(filename: string): string {
 // const result = await uploader.call({
 //   appUrl: process.env.BLOCKLET_APP_URL as string,
 //   mediaFolder: path.join(process.cwd(), "output/downloads/arcblock/blocklet-server"),
-//   mediaUrls: [
+//   mediaFiles: [
 //     "https://github.com/user-attachments/assets/4e29ea85-d75d-430e-8c5a-f1c384bc5a44",
 //     "https://github.com/user-attachments/assets/011da947-5fd9-457c-ad15-7a8cd622dd83",
 //     "https://github.com/user-attachments/assets/bdf3e0b0-02eb-4e5a-b5b6-8d1cbb156982",
