@@ -12,6 +12,8 @@ import { TableNode, TableRowNode, TableCellNode } from "@lexical/table";
 import { CodeNode, CodeHighlightNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 
+import { ImageNode } from "./ImageNode.js";
+
 export async function markdownToLexical(markdown: string) {
   let title = "Untitled Blog Post";
   let content = markdown;
@@ -36,6 +38,7 @@ export async function markdownToLexical(markdown: string) {
       TableRowNode,
       TableCellNode,
       LinkNode,
+      ImageNode,
       TextNode,
       LineBreakNode,
     ],
@@ -71,8 +74,11 @@ export const converter = FunctionAgent.from({
     content: z.any().describe("The JSON representation of the post content"),
   }),
   fn: async (input) => {
-    const result = await markdownToLexical(input.markdown);
-    return result;
+    const result = await markdownToLexical(input.markdown) as { title: string; content: any };
+    return {
+      title: result.title,
+      content: result.content
+    };
   },
 });
 
@@ -94,6 +100,8 @@ export const converter = FunctionAgent.from({
 // \`\`\`
 
 // ---
+
+// ![Test Image](https://example.com/image.jpg)
 // `;
 
 // const result = await markdownToLexical(markdown);

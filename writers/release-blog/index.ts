@@ -9,7 +9,7 @@ import { collector } from "./agents/collector/index.js";
 import type { Product } from "./agents/collector/types.js";
 import { reviewer } from "./agents/reviewer.js";
 import { publisher } from "./agents/publisher.js";
-import { converter } from "./agents/converter.js";
+import { converter } from "./agents/converter/index.js";
 import { writer } from "./agents/writer.js";
 import { downloader } from "./agents/downloader/index.js";
 import { uploader } from "./agents/uploader/index.js";
@@ -23,6 +23,12 @@ assert(GITHUB_TOKEN, "Please set the GITHUB_TOKEN environment variable");
 assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable");
 
 const appUrl = BLOCKLET_APP_URL;
+const language = "English";
+const length = "1200";
+const endDate = "2025-04-20";
+const concurrency = 5;
+const shouldPublish = true;
+const useCache = true;
 
 const openai = new OpenAIChatModel({
   apiKey: OPENAI_API_KEY,
@@ -35,12 +41,12 @@ const openai = new OpenAIChatModel({
 const engine = new ExecutionEngine({ model: openai });
 
 const repos = [
-  // "blocklet/payment-kit",
-  // "blocklet/discuss-kit",
-  // "blocklet/pages-kit",
-  // "blocklet/launcher",
-  // "blocklet/blocklet-store",
-  // "blocklet/did-services",
+  "blocklet/payment-kit",
+  "blocklet/discuss-kit",
+  "blocklet/pages-kit",
+  "blocklet/launcher",
+  "blocklet/blocklet-store",
+  "blocklet/did-services",
   "arcblock/did-spaces",
   // "arcblock/blocklet-server",
 ];
@@ -151,17 +157,11 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
   return finalized;
 };
 
-const language = "English";
-const length = "1200";
-const concurrency = 5;
-const shouldPublish = false;
-const useCache = true;
-
 for (const repo of repos) {
   const data = await engine.call(collector, {
     repo,
     days: repo === "arcblock/blocklet-server" ? 20 : 30,
-    endDate: "2025-04-18",
+    endDate,
     useCache,
   });
   // console.log('collector', data);
@@ -186,7 +186,10 @@ for (const repo of repos) {
 
   if (shouldPublish) {
     // Convert the blog post to Lexical Editor JSON representation
-    const converted = await engine.call(converter, { markdown });
+    const converted = await engine.call(converter, {
+      // markdown,
+      markdown: await readFile(illustratedFile, "utf-8"),
+    });
 
     // Publish the blog post to the Discuss Kit
     const published = await publisher.call({
