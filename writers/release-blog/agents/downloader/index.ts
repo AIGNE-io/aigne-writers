@@ -158,9 +158,8 @@ async function downloadFiles(
     results.push(...chunkResults.filter((result): result is string => result !== null));
   }
 
-  // If there were errors, throw a combined error
   if (errors.length > 0) {
-    throw new Error(
+    console.info(
       `Failed to download ${errors.length} files: ${errors.map((e) => e.message).join("; ")}`,
     );
   }
