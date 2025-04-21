@@ -18,9 +18,11 @@ Write a blog post based on the product context provided at the end of this promp
 
 Your article should use consistent heading levels for sections and follow this structure:
 
-1. **Title**
-   - One concise sentence that highlights the major user-facing changes.
-   - The title should include the product name: {{product.title}}
+1. **Title**: One short and concise sentence that meet following requirements:
+   - **Clarity:** The title should clearly indicate that this is a product release announcement.
+   - **Intrigue/Benefit:** Highlight the most impactful user-facing change.
+   - **Keywords:** Include the product name and relevant keywords where appropriate for searchability.
+   - **Length:** Aim for titles that are concise enough to be easily read and understood, especially in search results or social media shares.
 2. **Executive Summary**
    - A short overview of what's new and why it matters.
 3. **Feature Highlights** (group changes into logical categories):
