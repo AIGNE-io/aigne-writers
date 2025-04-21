@@ -24,8 +24,8 @@ Given a Markdown blog post and structured data including Pull Request details wi
      * If inserting multiple media files from the same pull request, insert their Markdown lines consecutively after the relevant text block, ensuring there is a blank line between each inserted image.
 6. **Handle Unmatched PRs:** If, after thoroughly scanning the blog content, you cannot find a reasonably clear and relevant section that discusses the changes from a pull request that has media files, **DO NOT** insert the media files for that pull request. Avoid adding media that does not directly illustrate the surrounding text in the blog.
 7. **Output:** Provide the *entire modified blog post content* in Markdown format as your final output. Include all original blog content and the newly inserted media Markdown lines.
-   * Do not add any extra text, commentary, JSON, or explanations outside of the modified blog post Markdown.
-   * Do not include quotes or backticks around the output.
+   * Do **not** add any extra text, commentary, JSON, or explanations outside of the modified blog post Markdown.
+   * Do **not** include quotes, brackets, or backticks around the output, just return the Markdown.
 
 ## ANTI-HALLUCINATION RULES
 
