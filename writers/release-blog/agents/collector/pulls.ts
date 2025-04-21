@@ -29,7 +29,6 @@ export function extractSummaryFromMarkdown(content: string): string {
     // Find headings that contain our keywords
     const headingIndices: number[] = [];
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     mdASTChildren.forEach((element: any, index: number) => {
       if (element.type === "heading") {
         // Extract heading text
@@ -66,7 +65,6 @@ export function extractSummaryFromMarkdown(content: string): string {
 
       // Find the next heading after this one
       for (let i = headingIndex + 1; i < mdASTChildren.length; i++) {
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         if ((mdASTChildren[i] as any).type === "heading") {
           endIndex = i;
           break;
@@ -110,7 +108,6 @@ export async function getRelevantPullRequests(
         per_page: 100,
         since: startDate.toISOString(),
       },
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       (response: any, done: () => void) => {
         // Stop pagination if we've gone past our date range
         const oldestPR = response.data[response.data.length - 1];
@@ -123,7 +120,6 @@ export async function getRelevantPullRequests(
 
     // Filter PRs within date range
     const relevantPRs = pullRequests.filter(
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       (pr: any) =>
         pr.merged_at && new Date(pr.merged_at) >= startDate && new Date(pr.merged_at) <= endDate,
     );
@@ -132,7 +128,6 @@ export async function getRelevantPullRequests(
 
     // Get detailed PR info including descriptions and media files
     const detailedPulls = await Promise.all(
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       relevantPRs.map(async (pr: any) => {
         await sleep(100);
 
@@ -148,6 +143,10 @@ export async function getRelevantPullRequests(
           const bodyText = (prDetails.body || "")
             .replace(/<!--[\s\S]*?-->/g, "")
             .replace(/\r\n/g, "\n");
+
+          if (bodyText.match(/@aignewriter\s*:\s*ignore/)) {
+            return null;
+          }
 
           // Extract links from PR body and title
           const allLinks = [...extractLinks(bodyText), ...extractLinks(pr.title)];
@@ -202,7 +201,7 @@ export async function getRelevantPullRequests(
       }),
     );
 
-    return detailedPulls;
+    return detailedPulls.filter(Boolean);
   } catch (error) {
     console.error(`Error fetching pull requests for ${repo}:`, error);
     return [];
