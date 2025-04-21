@@ -196,7 +196,12 @@ for (const repo of repos) {
     data: JSON.stringify(JSON.parse(await readFile(dataFile, "utf-8"))),
   });
   if (result.illustrated) {
-    await writeFile(illustratedFile, result.illustrated as string);
+    // Remove the markdown code block
+    const stripped = (result.illustrated as string)
+      .replace(/^```markdown\s/, "")
+      .replace(/\s*```$/, "")
+      .trim();
+    await writeFile(illustratedFile, stripped);
     console.log(`Illustrated blog saved to ${illustratedFile}`);
   }
 
