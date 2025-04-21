@@ -1,19 +1,19 @@
-import { FunctionAgent } from "@aigne/core";
 import { EventEmitter } from "node:events";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { join } from "node:path";
+import { FunctionAgent } from "@aigne/core";
 import {
   type OAuthClientProvider,
   UnauthorizedError,
   refreshAuthorization,
 } from "@modelcontextprotocol/sdk/client/auth.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import type {
   OAuthClientInformation,
   OAuthClientInformationFull,
   OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 // @ts-ignore
 import JWT from "jsonwebtoken";
 import open from "open";

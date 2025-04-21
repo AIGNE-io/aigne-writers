@@ -31,8 +31,8 @@ importers:
   writers/release-blog:
     dependencies:
       '@aigne/core':
-        specifier: ^1.8.0
-        version: 1.8.0(@anthropic-ai/sdk@0.39.0(encoding@0.1.13))(@google/generative-ai@0.24.0)(@types/node@22.14.0)(openai@4.93.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.2))
+        specifier: ^1.9.0
+        version: 1.9.0(@anthropic-ai/sdk@0.39.0(encoding@0.1.13))(@google/generative-ai@0.24.0)(@types/node@22.14.0)(openai@4.93.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.2))
       '@lexical/code':
         specifier: ^0.30.0
         version: 0.30.0
@@ -112,8 +112,8 @@ importers:
 
 packages:
 
-  '@aigne/core@1.8.0':
-    resolution: {integrity: sha512-TJ43uZKSc0HR5EgfeCle0/6OpZ0ejK/Fj/sa648spMoqBEEZRW86PZCopJSNxDd+LEsSK9Il6wE0I/fc6uZ9Zg==}
+  '@aigne/core@1.9.0':
+    resolution: {integrity: sha512-9It37kG5VQGlG8dL5kTRD43i+kagV8VaB3S+UZ3n8sqdbfIvpsUQK15WxiCbgccI8OZMT8YoPt0NT4rgG4RHnw==}
     peerDependencies:
       '@anthropic-ai/sdk': ^0.39.0
       '@google/generative-ai': ^0.24.0
@@ -1393,7 +1393,7 @@ packages:
 
 snapshots:
 
-  '@aigne/core@1.8.0(@anthropic-ai/sdk@0.39.0(encoding@0.1.13))(@google/generative-ai@0.24.0)(@types/node@22.14.0)(openai@4.93.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.2))':
+  '@aigne/core@1.9.0(@anthropic-ai/sdk@0.39.0(encoding@0.1.13))(@google/generative-ai@0.24.0)(@types/node@22.14.0)(openai@4.93.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.2))':
     dependencies:
       '@aigne/json-schema-to-zod': 1.3.3(zod@3.24.2)
       '@anthropic-ai/sdk': 0.39.0(encoding@0.1.13)

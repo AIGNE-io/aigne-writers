@@ -1,16 +1,16 @@
 import { FunctionAgent } from "@aigne/core";
 import { z } from "zod";
 
-import { JSDOM } from "jsdom";
-import { marked } from "marked";
+import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { createHeadlessEditor } from "@lexical/headless";
 import { $generateNodesFromDOM } from "@lexical/html";
-import { $getRoot, $insertNodes, TextNode, LineBreakNode } from "lexical";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { ListNode, ListItemNode } from "@lexical/list";
-import { TableNode, TableRowNode, TableCellNode } from "@lexical/table";
-import { CodeNode, CodeHighlightNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
+import { ListItemNode, ListNode } from "@lexical/list";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { JSDOM } from "jsdom";
+import { $getRoot, $insertNodes, LineBreakNode, TextNode } from "lexical";
+import { marked } from "marked";
 
 import { ImageNode } from "./ImageNode.js";
 
@@ -20,7 +20,7 @@ export async function markdownToLexical(markdown: string) {
   const titleMatch = markdown.trim().match(/^#\s+(.+)$/m);
   if (titleMatch?.[1]) {
     title = titleMatch[1].trim();
-    content = markdown.replace(/^#\s+.+$/m, '').trim();
+    content = markdown.replace(/^#\s+.+$/m, "").trim();
   }
 
   const html = await marked(content);
@@ -44,22 +44,28 @@ export async function markdownToLexical(markdown: string) {
     ],
   });
 
-  editor.update(() => {
-    const dom = new JSDOM(html);
-    const htmlDocument = dom.window.document;
-    const nodes = $generateNodesFromDOM(editor, htmlDocument);
-    $getRoot().select();
-    $insertNodes(nodes);
-  }, { discrete: true });
+  editor.update(
+    () => {
+      const dom = new JSDOM(html);
+      const htmlDocument = dom.window.document;
+      const nodes = $generateNodesFromDOM(editor, htmlDocument);
+      $getRoot().select();
+      $insertNodes(nodes);
+    },
+    { discrete: true },
+  );
 
   return new Promise((resolve) => {
-    setTimeout(() => {
-      editor.update(() => {
-        const state = editor.getEditorState();
-        const json = state.toJSON();
-        resolve({ title, content: json });
-      });
-    }, Math.min(content.length, 500));
+    setTimeout(
+      () => {
+        editor.update(() => {
+          const state = editor.getEditorState();
+          const json = state.toJSON();
+          resolve({ title, content: json });
+        });
+      },
+      Math.min(content.length, 500),
+    );
   });
 }
 
@@ -74,10 +80,10 @@ export const converter = FunctionAgent.from({
     content: z.any().describe("The JSON representation of the post content"),
   }),
   fn: async (input) => {
-    const result = await markdownToLexical(input.markdown) as { title: string; content: any };
+    const result = (await markdownToLexical(input.markdown)) as { title: string; content: any };
     return {
       title: result.title,
-      content: result.content
+      content: result.content,
     };
   },
 });

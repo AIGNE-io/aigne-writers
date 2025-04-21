@@ -10,9 +10,9 @@ import type {
   SerializedEditor,
   SerializedLexicalNode,
   Spread,
-} from 'lexical';
+} from "lexical";
 
-import { createEditor, DecoratorNode } from 'lexical';
+import { DecoratorNode, createEditor } from "lexical";
 
 // Define JSX namespace for headless environment
 declare namespace JSX {
@@ -24,7 +24,7 @@ declare namespace JSX {
 }
 
 // Define ImageSizeMode type if not available
-export type ImageSizeMode = 'normal' | 'fit' | 'fill';
+export type ImageSizeMode = "normal" | "fit" | "fill";
 
 export interface ImagePayload {
   file?: File;
@@ -63,7 +63,7 @@ export type SerializedImageNode = Spread<
     markerState?: string;
     frame?: string;
     sizeMode?: ImageSizeMode;
-    type: 'image';
+    type: "image";
     version: 1;
   },
   SerializedLexicalNode
@@ -76,9 +76,9 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 
   __altText: string;
 
-  __width: 'inherit' | number;
+  __width: "inherit" | number;
 
-  __height: 'inherit' | number;
+  __height: "inherit" | number;
 
   __maxWidth: number;
 
@@ -96,7 +96,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   __captionsEnabled: boolean;
 
   static getType(): string {
-    return 'image';
+    return "image";
   }
 
   static clone(node: ImageNode): ImageNode {
@@ -113,13 +113,23 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       node.file,
       node.__markerState,
       node.__frame,
-      node.__sizeMode
+      node.__sizeMode,
     );
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { altText, height, width, maxWidth, caption, src, showCaption, markerState, frame, sizeMode } =
-      serializedNode;
+    const {
+      altText,
+      height,
+      width,
+      maxWidth,
+      caption,
+      src,
+      showCaption,
+      markerState,
+      frame,
+      sizeMode,
+    } = serializedNode;
     const node = $createImageNode({
       altText,
       height,
@@ -140,9 +150,9 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   exportDOM(): DOMExportOutput {
-    const element = document.createElement('img');
-    element.setAttribute('src', this.__src || '');
-    element.setAttribute('alt', this.__altText);
+    const element = document.createElement("img");
+    element.setAttribute("src", this.__src || "");
+    element.setAttribute("alt", this.__altText);
     return { element };
   }
 
@@ -159,8 +169,8 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     src: string | undefined,
     altText: string,
     maxWidth: number,
-    width?: 'inherit' | number,
-    height?: 'inherit' | number,
+    width?: "inherit" | number,
+    height?: "inherit" | number,
     showCaption?: boolean,
     caption?: LexicalEditor,
     captionsEnabled?: boolean,
@@ -168,14 +178,14 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     file?: File,
     markerState?: string,
     frame?: string,
-    sizeMode?: ImageSizeMode
+    sizeMode?: ImageSizeMode,
   ) {
     super(key);
     this.__src = src;
     this.__altText = altText;
     this.__maxWidth = maxWidth;
-    this.__width = width || 'inherit';
-    this.__height = height || 'inherit';
+    this.__width = width || "inherit";
+    this.__height = height || "inherit";
     this.__showCaption = showCaption || false;
     this.__caption = caption || createEditor();
     this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
@@ -189,20 +199,20 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return {
       altText: this.getAltText(),
       caption: this.__caption.toJSON(),
-      height: this.__height === 'inherit' ? 0 : this.__height,
+      height: this.__height === "inherit" ? 0 : this.__height,
       maxWidth: this.__maxWidth,
       showCaption: this.__showCaption,
       src: this.getSrc(),
-      type: 'image',
+      type: "image",
       version: 1,
-      width: this.__width === 'inherit' ? 0 : this.__width,
+      width: this.__width === "inherit" ? 0 : this.__width,
       markerState: this.__markerState,
       frame: this.__frame,
       sizeMode: this.__sizeMode,
     };
   }
 
-  setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number): void {
+  setWidthAndHeight(width: "inherit" | number, height: "inherit" | number): void {
     const writable = this.getWritable();
     writable.__width = width;
     writable.__height = height;
@@ -231,7 +241,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   // View
 
   createDOM(config: EditorConfig): HTMLElement {
-    const span = document.createElement('span');
+    const span = document.createElement("span");
     const { theme } = config;
     const className = theme.image;
     if (className !== undefined) {
@@ -262,13 +272,13 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     // Return a simple div as placeholder for the headless editor
     // Using a string-based approach instead of JSX for headless environment
     return {
-      type: 'div',
+      type: "div",
       props: {
-        className: 'image-placeholder',
-        'data-src': this.__src,
-        'data-alt': this.__altText
+        className: "image-placeholder",
+        "data-src": this.__src,
+        "data-alt": this.__altText,
       },
-      children: []
+      children: [],
     };
   }
 }
@@ -301,7 +311,7 @@ export function $createImageNode({
     file,
     markerState,
     frame,
-    sizeMode
+    sizeMode,
   );
 }
 

@@ -1,24 +1,27 @@
 #!/usr/bin/env npx -y bun
 
 import assert from "node:assert";
+import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ExecutionEngine } from "@aigne/core";
+import { GeminiChatModel } from "@aigne/core/models/gemini-chat-model.js";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
+
+import { authenticator } from "./agents/authenticator/index.js";
 import { collector } from "./agents/collector/index.js";
 import type { Product } from "./agents/collector/types.js";
-import { reviewer } from "./agents/reviewer.js";
-import { publisher } from "./agents/publisher.js";
 import { converter } from "./agents/converter/index.js";
-import { writer } from "./agents/writer.js";
 import { downloader } from "./agents/downloader/index.js";
-import { uploader } from "./agents/uploader/index.js";
-import { authenticator } from "./agents/authenticator/index.js";
-import { existsSync } from "node:fs";
 import { illustrator } from "./agents/illustrator.js";
+import { publisher } from "./agents/publisher.js";
+import { reviewer } from "./agents/reviewer.js";
+import { uploader } from "./agents/uploader/index.js";
+import { writer } from "./agents/writer.js";
 
-const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL } = process.env;
+const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL, GEMINI_API_KEY } = process.env;
 assert(OPENAI_API_KEY, "Please set the OPENAI_API_KEY environment variable");
+assert(GEMINI_API_KEY, "Please set the GEMINI_API_KEY environment variable");
 assert(GITHUB_TOKEN, "Please set the GITHUB_TOKEN environment variable");
 assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable");
 
@@ -30,6 +33,7 @@ const concurrency = 3;
 const shouldPublish = true;
 const useCache = true;
 
+// Used for most tasks
 const openai = new OpenAIChatModel({
   apiKey: OPENAI_API_KEY,
   model: "gpt-4o-mini",
@@ -38,7 +42,19 @@ const openai = new OpenAIChatModel({
   },
 });
 
-const engine = new ExecutionEngine({ model: openai });
+// Used for the illustrator
+const gemini = new GeminiChatModel({
+  apiKey: GEMINI_API_KEY,
+  model: "gemini-2.5-flash-preview-04-17",
+});
+
+const engine = new ExecutionEngine({
+  model: openai,
+});
+
+const geminiEngine = new ExecutionEngine({
+  model: gemini,
+});
 
 const repos = [
   "blocklet/payment-kit",
@@ -175,7 +191,7 @@ for (const repo of repos) {
     processMediaFiles(data, repo, dataFile),
   ]);
 
-  const result = await engine.call(illustrator, {
+  const result = await geminiEngine.call(illustrator, {
     blog: markdown,
     data: JSON.stringify(JSON.parse(await readFile(dataFile, "utf-8"))),
   });

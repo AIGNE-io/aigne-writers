@@ -69,7 +69,10 @@ export const publisher = FunctionAgent.from({
       const { post, appUrl, accessToken } = input;
 
       const url = new URL(appUrl);
-      const mountPoint = await getComponentMountPoint(appUrl, "z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu");
+      const mountPoint = await getComponentMountPoint(
+        appUrl,
+        "z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu",
+      );
       console.log(`Found Discuss Kit mount point: ${mountPoint}`);
 
       // Step 2: Make a POST request to publish the blog post
