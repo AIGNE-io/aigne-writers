@@ -57,12 +57,12 @@ const geminiEngine = new ExecutionEngine({
 });
 
 const repos = [
-  // "blocklet/payment-kit",
-  "blocklet/discuss-kit",
-  "blocklet/pages-kit",
-  "blocklet/launcher",
-  "blocklet/blocklet-store",
-  "blocklet/did-services",
+  "blocklet/payment-kit",
+  // "blocklet/discuss-kit",
+  // "blocklet/pages-kit",
+  // "blocklet/launcher",
+  // "blocklet/blocklet-store",
+  // "blocklet/did-services",
   // "arcblock/did-spaces",
   // "arcblock/blocklet-server",
 ];

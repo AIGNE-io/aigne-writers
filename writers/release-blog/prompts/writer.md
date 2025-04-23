@@ -18,11 +18,7 @@ Write a blog post based on the product context provided at the end of this promp
 
 Your article should use consistent heading levels for sections and follow this structure:
 
-1. **Title**: One short and concise sentence that meet following requirements:
-   - **Clarity:** The title should clearly indicate that this is a product release announcement.
-   - **Intrigue/Benefit:** Highlight the most impactful user-facing change.
-   - **Keywords:** Include the product name and relevant keywords where appropriate for searchability.
-   - **Length:** Aim for titles that are concise enough to be easily read and understood, especially in search results or social media shares.
+1. **Title**: One short and concise sentence that highlights the primary user-facing feature or enhancement.
 2. **Executive Summary**
    - A short overview of what's new and why it matters.
 3. **Feature Highlights** (group changes into logical categories):
@@ -35,6 +31,39 @@ Your article should use consistent heading levels for sections and follow this s
    Future plans or ongoing efforts, inferred from changelog patterns.
 5. **Resources**
    Add links to the documentation ({{product.docs}}), community ({{product.community}}), and product/store page ({{product.store}}).
+
+### TITLE GUIDELINES (MANDATORY)
+
+Write a single, specific, user-oriented sentence for the blog post title, following these exact rules:
+
+- Must clearly state the primary user-facing feature or enhancement
+- Must include the product name
+- Must imply release/availability using words like `now`, `adds`, `introduces`, `lets you`, `brings`, or `includes`
+- Must avoid generalities like "enhanced" “update” or “improvements” unless directly tied to a named feature
+- Must be under 65 characters to optimize for SEO and social media previews
+- Must not include version numbers or internal code names
+
+#### Feature Prioritization (for Title Selection)
+
+Before writing the title:
+
+1. Review the full feature list
+2. Rank changes by user impact
+3. Use the top-ranked change to drive the title
+4. If multiple small improvements exist but no standout, consider a grouped title (e.g., “Top UX Updates in {{product.title}}”)
+
+### TITLE EXAMPLES
+
+| Weak / Generic Title                          | Strong / Specific Title                                           |
+|-----------------------------------------------|--------------------------------------------------------------------|
+| DID Spaces Update Brings New Features         | DID Spaces Now Previews Discuss Posts with Metadata               |
+| PagesKit Performance Enhancements             | PagesKit Loads Blog Templates 40% Faster                          |
+| DiscussKit Improvements for UX and Errors     | DiscussKit Adds Post Previews + Clearer Error Messages            |
+| New Capabilities in DID Space                 | Your DID Space now supports Cross-Platform Data Linking           |
+| Major Release for DiscussKit                  | DiscussKit Introduces Group-Based Reply Threads                   |
+| Update: Better Memory Usage and Fixes         | DID Spaces Reduces Memory Use for Large Document Syncs            |
+| Introducing DiscussKit Enhancements           | DiscussKit now supports Markdown Previews in Live Threads         |
+| Big UX Fixes Across the Platform              | PagesKit Adds Drag-to-Reorder Blocks for Easier Editing           |
 
 ### Content Requirements
 

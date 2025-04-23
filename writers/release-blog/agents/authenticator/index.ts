@@ -8,7 +8,7 @@ import {
   UnauthorizedError,
   refreshAuthorization,
 } from "@modelcontextprotocol/sdk/client/auth.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type {
   OAuthClientInformation,
   OAuthClientInformationFull,
@@ -155,8 +155,10 @@ export class BlockletOAuthProvider extends EventEmitter implements OAuthClientPr
 
           if (code) {
             this.emit("authorized", code);
-            console.info("Authorization successful!", Date.now());
-            resolve();
+            console.info("Authorization code received, exchanging for tokens...");
+            setTimeout(() => {
+              resolve();
+            }, 3000);
           } else {
             this.emit("error", new Error("No authorization code received"));
             reject(new Error("No authorization code received"));
@@ -166,7 +168,7 @@ export class BlockletOAuthProvider extends EventEmitter implements OAuthClientPr
 
       // Start the local server
       server.listen(this.localServerPort, async () => {
-        console.log("Please authorize the application in your browser...");
+        console.log("Please complete the authorization in your browser...");
         // Open the authorization URL in the default browser
         await open(authorizationUrl.toString());
       });
@@ -235,18 +237,22 @@ export const authenticator = FunctionAgent.from({
     refreshToken: z.string().optional(),
   }),
   fn: async (input: { appUrl: string }) => {
-    console.info("Connecting to blocklet app", input.appUrl);
-
     const appUrl = new URL(input.appUrl);
-    appUrl.pathname = "/.well-known/service/mcp/sse";
+    appUrl.pathname = "/.well-known/service/mcp";
+    console.info("Connecting to blocklet app", appUrl.href);
+
+    let transport: StreamableHTTPClientTransport;
 
     const provider = new BlockletOAuthProvider(appUrl.host);
     const authCodePromise = new Promise((resolve, reject) => {
-      provider.once("authorized", resolve);
+      provider.once("authorized", async (code) => {
+        await transport.finishAuth(code);
+        resolve(code);
+      });
       provider.once("error", reject);
     });
 
-    const transport = new SSEClientTransport(appUrl, {
+    transport = new StreamableHTTPClientTransport(appUrl, {
       authProvider: provider,
     });
 
@@ -270,11 +276,12 @@ export const authenticator = FunctionAgent.from({
               const now = Date.now();
               const expiresAt = decoded.exp * 1000;
               if (now < expiresAt) {
-                console.info(
-                  "Refresh token already exists and not expired, refreshing authorization",
-                );
+                const oauthUrl = new URL(input.appUrl);
+                oauthUrl.pathname = "/.well-known/oauth-authorization-server";
+                const metadata = await fetch(oauthUrl.href).then((res) => res.json());
                 try {
-                  tokens = await refreshAuthorization(appUrl.href, {
+                  tokens = await refreshAuthorization(oauthUrl.href, {
+                    metadata,
                     // biome-ignore lint/style/noNonNullAssertion: <explanation>
                     clientInformation: (await provider.clientInformation())!,
                     refreshToken: tokens.refresh_token,
