@@ -31,7 +31,7 @@ const length = "1200";
 const endDate = "2025-04-20";
 const concurrency = 3;
 const shouldPublish = true;
-const useCache = true;
+const useCache = false;
 
 // Used for most tasks
 const openai = new OpenAIChatModel({
@@ -57,12 +57,12 @@ const geminiEngine = new ExecutionEngine({
 });
 
 const repos = [
-  "blocklet/payment-kit",
+  // "blocklet/payment-kit",
   "blocklet/discuss-kit",
   "blocklet/pages-kit",
-  // "blocklet/launcher",
-  // "blocklet/blocklet-store",
-  // "blocklet/did-services",
+  "blocklet/launcher",
+  "blocklet/blocklet-store",
+  "blocklet/did-services",
   // "arcblock/did-spaces",
   // "arcblock/blocklet-server",
 ];
