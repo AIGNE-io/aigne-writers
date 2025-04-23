@@ -37,7 +37,7 @@ Your article should use consistent heading levels for sections and follow this s
 Write a single, specific, user-oriented sentence for the blog post title, following these exact rules:
 
 - Must clearly state the primary user-facing feature or enhancement
-- Must include the product name
+- Must include the product name, and in title case
 - Must imply release/availability using words like `now`, `adds`, `introduces`, `lets you`, `brings`, or `includes`
 - Must avoid generalities like "enhanced" “update” or “improvements” unless directly tied to a named feature
 - Must be under 65 characters to optimize for SEO and social media previews
