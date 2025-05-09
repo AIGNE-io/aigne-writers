@@ -1,5 +1,5 @@
 ---
-description: 
+description:
 globs: writers/**/*.ts
 alwaysApply: false
 ---
@@ -118,7 +118,7 @@ In AIGNE Framework, ChatModel is an abstract base class for interacting with Lar
 - **ClaudeChatModel**: For communicating with Anthropic's Claude series models
 - **XAIChatModel**: For communicating with X.AI's Grok series models
 
-ChatModel can be used directly, but it's generally recommended to use it through ExecutionEngine to gain more advanced features like tool integration, error handling, and state management.
+ChatModel can be used directly, but it's generally recommended to use it through AIGNE to gain more advanced features like tool integration, error handling, and state management.
 
 **Example**:
 
@@ -145,8 +145,8 @@ const xaiModel = new XAIChatModel({
   model: "grok-2-latest", // Optional, defaults to "grok-2-latest"
 });
 
-// Use with ExecutionEngine
-const engine = new ExecutionEngine({ model: openaiModel });
+// Use with AIGNE
+const engine = new AIGNE({ model: openaiModel });
 ```
 
 For more information, refer to the [ChatModel API documentation](mdc:apis/chat-model.md).
@@ -172,10 +172,10 @@ AIGNE Framework supports multiple workflow patterns, each suitable for different
 
 ### Execution Engine
 
-The ExecutionEngine is the runtime environment for workflows, responsible for coordinating communication and execution flow between Agents.
+The AIGNE is the runtime environment for workflows, responsible for coordinating communication and execution flow between Agents.
 
 ```typescript
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 ```
 
 ## Workflow Patterns
@@ -193,7 +193,7 @@ const engine = new ExecutionEngine({ model });
 **Example**:
 
 ```typescript
-import { AIAgent, ExecutionEngine, FunctionAgent } from "@aigne/core";
+import { AIAgent, AIGNE, FunctionAgent } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 import { z } from "zod";
 
@@ -222,7 +222,7 @@ Work with the sandbox to execute your code.
 });
 
 // Create execution engine and run
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 const result = await engine.call(coder, "10! = ?");
 console.log(result);
 // Output: { text: "The value of \\(10!\\) (10 factorial) is 3,628,800." }
@@ -240,7 +240,7 @@ console.log(result);
 **Example**:
 
 ```typescript
-import { AIAgent, ExecutionEngine } from "@aigne/core";
+import { AIAgent, AIGNE } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
 // Concept extractor Agent
@@ -289,7 +289,7 @@ Draft copy:
 });
 
 // Execute three Agents in sequence
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 const result = await engine.call(sequential(conceptExtractor, writer, formatProof),
   { product: "AIGNE is a No-code Generative AI Apps Engine" }
 );
@@ -310,7 +310,7 @@ console.log(result);
 **Example**:
 
 ```typescript
-import { AIAgent, ExecutionEngine, parallel } from "@aigne/core";
+import { AIAgent, AIGNE, parallel } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
 // Feature extraction Agent
@@ -334,7 +334,7 @@ Product description:
 });
 
 // Execute two Agents in parallel
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 const result = await engine.call(
   parallel(featureExtractor, audienceAnalyzer),
   { product: "AIGNE is a No-code Generative AI Apps Engine" }
@@ -359,7 +359,7 @@ console.log(result);
 ```typescript
 import {
   AIAgent,
-  ExecutionEngine,
+  AIGNE,
   UserInputTopic,
   UserOutputTopic,
 } from "@aigne/core";
@@ -422,7 +422,7 @@ Please review the code. If previous feedback was provided, see if it was address
 });
 
 // Execute reflection workflow
-const engine = new ExecutionEngine({ model, agents: [coder, reviewer] });
+const engine = new AIGNE({ model, agents: [coder, reviewer] });
 const result = await engine.call("Write a function to find the sum of all even numbers in a list.");
 console.log(result);
 // Output contains approved code and feedback
@@ -440,7 +440,7 @@ console.log(result);
 **Example**:
 
 ```typescript
-import { AIAgent, ExecutionEngine } from "@aigne/core";
+import { AIAgent, AIGNE } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
 // Function to transfer to Agent B
@@ -464,7 +464,7 @@ const agentB = AIAgent.from({
 });
 
 // Execute handoff workflow
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 const userAgent = await engine.call(agentA);
 
 // Transfer to Agent B
@@ -490,7 +490,7 @@ console.log(result2);
 **Example**:
 
 ```typescript
-import { AIAgent, ExecutionEngine } from "@aigne/core";
+import { AIAgent, AIGNE } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
 // Product support Agent
@@ -537,7 +537,7 @@ const triage = AIAgent.from({
 });
 
 // Execute router workflow
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 
 // Product-related questions automatically routed to product support
 const result1 = await engine.call(triage, "How to use this product?");
@@ -568,7 +568,7 @@ console.log(result3);
 
 ```typescript
 import { OrchestratorAgent } from "@aigne/agent-library";
-import { AIAgent, ExecutionEngine, MCPAgent } from "@aigne/core";
+import { AIAgent, AIGNE, MCPAgent } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
 // Create specialized Agents
@@ -647,7 +647,7 @@ const agent = OrchestratorAgent.from({
 });
 
 // Execute orchestrator workflow
-const engine = new ExecutionEngine({ model });
+const engine = new AIGNE({ model });
 const result = await engine.call(
   agent,
   `Conduct an in-depth research on ArcBlock using only the official website\
@@ -676,7 +676,7 @@ The Puppeteer MCP server allows AIGNE Framework to access and manipulate web con
 ```typescript
 import {
   AIAgent,
-  ExecutionEngine,
+  AIGNE,
   MCPAgent,
 } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
@@ -688,7 +688,7 @@ const puppeteerMCPAgent = await MCPAgent.from({
 });
 
 // Create execution engine
-const engine = new ExecutionEngine({
+const engine = new AIGNE({
   model,
   tools: [puppeteerMCPAgent],
 });
@@ -731,7 +731,7 @@ The SQLite MCP server allows AIGNE Framework to interact with SQLite databases.
 import { join } from "node:path";
 import {
   AIAgent,
-  ExecutionEngine,
+  AIGNE,
   MCPAgent,
 } from "@aigne/core";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
@@ -748,7 +748,7 @@ const sqlite = await MCPAgent.from({
 });
 
 // Create execution engine
-const engine = new ExecutionEngine({
+const engine = new AIGNE({
   model,
   tools: [sqlite],
 });

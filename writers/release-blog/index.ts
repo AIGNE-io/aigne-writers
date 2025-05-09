@@ -4,7 +4,7 @@ import assert from "node:assert";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ExecutionEngine } from "@aigne/core";
+import { AIGNE } from "@aigne/core";
 import { GeminiChatModel } from "@aigne/core/models/gemini-chat-model.js";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
@@ -28,7 +28,7 @@ assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable")
 const appUrl = BLOCKLET_APP_URL;
 const language = "English";
 const length = "1200";
-const endDate = "2025-04-20";
+const endDate = "2025-05-10";
 const concurrency = 3;
 const shouldPublish = true;
 const useCache = false;
@@ -48,11 +48,11 @@ const gemini = new GeminiChatModel({
   model: "gemini-2.5-flash-preview-04-17",
 });
 
-const engine = new ExecutionEngine({
+const engine = new AIGNE({
   model: openai,
 });
 
-const geminiEngine = new ExecutionEngine({
+const geminiEngine = new AIGNE({
   model: gemini,
 });
 
@@ -68,7 +68,7 @@ const repos = [
 ];
 
 // We just need to authenticate once
-const { accessToken } = await engine.call(authenticator, { appUrl });
+const { accessToken } = await engine.invoke(authenticator, { appUrl });
 
 const processMediaFiles = async (data: any, repo: string, dataFile: string) => {
   const mediaFiles = data.pulls?.flatMap((pull: any) =>
@@ -77,7 +77,7 @@ const processMediaFiles = async (data: any, repo: string, dataFile: string) => {
   console.log("media files", mediaFiles);
 
   // Download media files
-  const downloaded = await engine.call(downloader, {
+  const downloaded = await engine.invoke(downloader, {
     urls: mediaFiles,
     repoName: repo,
     concurrency,
@@ -85,7 +85,7 @@ const processMediaFiles = async (data: any, repo: string, dataFile: string) => {
   console.log("media files downloaded", downloaded);
 
   // Upload media files
-  const uploaded = await engine.call(uploader, {
+  const uploaded = await engine.invoke(uploader, {
     appUrl,
     mediaFolder: join(process.cwd(), "output/downloads", repo.toLowerCase()),
     mediaFiles: mediaFiles,
@@ -121,7 +121,7 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
   }
 
   // Generate initial blog post
-  const draft = await engine.call(writer, {
+  const draft = await engine.invoke(writer, {
     product: data.product as Product,
     changes: JSON.stringify(data.changes),
     pulls: JSON.stringify(data.pulls),
@@ -130,7 +130,7 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
   });
   console.log("draft", draft.blog);
 
-  // const polishedBlog = await engine.call(polisher, {
+  // const polishedBlog = await engine.invoke(polisher, {
   //   blog: draft.blog as string,
   //   product: JSON.stringify(data.product),
   //   language: "English",
@@ -138,7 +138,7 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
   // console.log("polishedBlog", polishedBlog.polished);
 
   // Review the blog post
-  const reviewed = await engine.call(reviewer, {
+  const reviewed = await engine.invoke(reviewer, {
     blog: draft.blog as string,
     product: data.product,
     changes: JSON.stringify(data.changes),
@@ -154,7 +154,7 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
     );
 
     // Generate revised blog post with feedback
-    const revised = await engine.call(writer, {
+    const revised = await engine.invoke(writer, {
       product: data.product as Product,
       changes: JSON.stringify(data.changes),
       pulls: JSON.stringify(data.pulls),
@@ -174,9 +174,9 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
 };
 
 for (const repo of repos) {
-  const data = await engine.call(collector, {
+  const data = await engine.invoke(collector, {
     repo,
-    days: repo === "arcblock/blocklet-server" ? 20 : 30,
+    days: 20,
     endDate,
     useCache,
   });
@@ -191,7 +191,7 @@ for (const repo of repos) {
     processMediaFiles(data, repo, dataFile),
   ]);
 
-  const result = await geminiEngine.call(illustrator, {
+  const result = await geminiEngine.invoke(illustrator, {
     blog: markdown,
     data: JSON.stringify(JSON.parse(await readFile(dataFile, "utf-8"))),
   });
@@ -207,13 +207,13 @@ for (const repo of repos) {
 
   if (shouldPublish) {
     // Convert the blog post to Lexical Editor JSON representation
-    const converted = await engine.call(converter, {
+    const converted = await engine.invoke(converter, {
       // markdown,
       markdown: await readFile(illustratedFile, "utf-8"),
     });
 
     // Publish the blog post to the Discuss Kit
-    const published = await publisher.call({
+    const published = await publisher.invoke({
       appUrl,
       accessToken: accessToken as string,
       post: {

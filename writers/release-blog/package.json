@@ -20,7 +20,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@aigne/core": "^1.10.0",
+    "@aigne/core": "^1.13.0",
     "@lexical/code": "^0.30.0",
     "@lexical/headless": "^0.30.0",
     "@lexical/html": "^0.30.0",

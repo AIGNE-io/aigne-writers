@@ -46,17 +46,17 @@ export class BlockletOAuthProvider extends EventEmitter implements OAuthClientPr
 
   get clientMetadata() {
     return {
-      redirect_uris: [this.redirectUrl],
+      redirect_uris: ["https://grafana.abtnet.io/login/generic_oauth"],
       grant_types: ["authorization_code", "refresh_token"],
       response_types: ["code"],
-      client_name: "AIGNE Writers",
-      client_uri: "https://www.aigne.io/framework",
-      logo_uri: "https://www.aigne.io/.well-known/service/blocklet/logo",
-      scope: "profile:read blocklet:read blocklet:write",
+      client_name: "Grafana",
+      client_uri: "https://grafana.abtnet.io",
+      logo_uri: "https://grafana.abtnet.io/.well-known/service/blocklet/logo",
+      scope: "profile:read",
       tos_uri: "https://www.arcblock.io/en/termsofuse",
       policy_uri: "https://www.arcblock.io/en/privacy",
-      contacts: ["support@aigne.io"],
-      software_id: "AIGNE Writers",
+      contacts: ["blocklet@aigne.io"],
+      software_id: "Grafana",
       software_version: "1.0.0",
     };
   }
@@ -233,7 +233,7 @@ export const authenticator = FunctionAgent.from({
     appUrl: z.string(),
   }),
   outputSchema: z.object({
-    accessToken: z.string(),
+    accessToken: z.string().optional(),
     refreshToken: z.string().optional(),
   }),
   fn: async (input: { appUrl: string }) => {
@@ -258,7 +258,7 @@ export const authenticator = FunctionAgent.from({
 
     try {
       let tokens = await provider.tokens();
-      if (tokens) {
+      if (tokens?.access_token && tokens?.refresh_token) {
         let decoded = JWT.decode(tokens.access_token);
         if (decoded) {
           const now = Date.now();
@@ -308,7 +308,7 @@ export const authenticator = FunctionAgent.from({
         }
       } else {
         console.info("No tokens found, starting authorization");
-        await transport.start();
+        await transport._authThenStart();
       }
     } catch (error) {
       if (error instanceof UnauthorizedError) {
