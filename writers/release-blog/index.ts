@@ -8,7 +8,7 @@ import { AIGNE } from "@aigne/core";
 import { GeminiChatModel } from "@aigne/core/models/gemini-chat-model.js";
 import { OpenAIChatModel } from "@aigne/core/models/openai-chat-model.js";
 
-import { authenticator } from "./agents/authenticator/index.js";
+// import { authenticator } from "./agents/authenticator/index.js";
 import { collector } from "./agents/collector/index.js";
 import type { Product } from "./agents/collector/types.js";
 import { converter } from "./agents/converter/index.js";
@@ -19,19 +19,22 @@ import { reviewer } from "./agents/reviewer.js";
 import { uploader } from "./agents/uploader/index.js";
 import { writer } from "./agents/writer.js";
 
-const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL, GEMINI_API_KEY } = process.env;
+const { OPENAI_API_KEY, GITHUB_TOKEN, BLOCKLET_APP_URL, GEMINI_API_KEY, BLOCKLET_ACCESS_KEY } = process.env;
 assert(OPENAI_API_KEY, "Please set the OPENAI_API_KEY environment variable");
 assert(GEMINI_API_KEY, "Please set the GEMINI_API_KEY environment variable");
 assert(GITHUB_TOKEN, "Please set the GITHUB_TOKEN environment variable");
 assert(BLOCKLET_APP_URL, "Please set the BLOCKLET_APP_URL environment variable");
+assert(BLOCKLET_ACCESS_KEY, "Please set the BLOCKLET_ACCESS_KEY environment variable");
+
+const accessToken = BLOCKLET_ACCESS_KEY;
 
 const appUrl = BLOCKLET_APP_URL;
 const language = "English";
 const length = "1200";
-const endDate = "2025-05-10";
+const endDate = "2025-06-27";
 const concurrency = 3;
 const shouldPublish = true;
-const useCache = false;
+const useCache = true;
 
 // Used for most tasks
 const openai = new OpenAIChatModel({
@@ -57,18 +60,19 @@ const geminiEngine = new AIGNE({
 });
 
 const repos = [
-  "blocklet/payment-kit",
+  // "blocklet/payment-kit",
   // "blocklet/discuss-kit",
   // "blocklet/pages-kit",
+  // "blocklet/media-kit",
   // "blocklet/launcher",
   // "blocklet/blocklet-store",
   // "blocklet/did-services",
-  // "arcblock/did-spaces",
+  "arcblock/did-spaces",
   // "arcblock/blocklet-server",
 ];
 
 // We just need to authenticate once
-const { accessToken } = await engine.invoke(authenticator, { appUrl });
+// const { accessToken } = await engine.invoke(authenticator, { appUrl });
 
 const processMediaFiles = async (data: any, repo: string, dataFile: string) => {
   const mediaFiles = data.pulls?.flatMap((pull: any) =>
@@ -176,7 +180,7 @@ const processPost = async (data: any, repo: string, markdownFile: string, useCac
 for (const repo of repos) {
   const data = await engine.invoke(collector, {
     repo,
-    days: 20,
+    days: 36,
     endDate,
     useCache,
   });
