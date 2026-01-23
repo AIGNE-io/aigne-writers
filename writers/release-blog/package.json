@@ -34,7 +34,7 @@
     "dotenv": "^16.5.0",
     "jsdom": "^26.1.0",
     "lexical": "^0.30.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "marked": "^15.0.8",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
