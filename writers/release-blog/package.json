@@ -41,7 +41,7 @@
     "openai": "^4.93.0",
     "p-limit": "^6.2.0",
     "semver": "^7.5.4",
-    "@modelcontextprotocol/sdk": "^1.10.2",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "jsonwebtoken": "^9.0.2",
     "open": "^10.1.0",
     "zod": "^3.24.3"
