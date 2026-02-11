@@ -30,7 +30,7 @@
     "@octokit/rest": "^20.1.1",
     "@uppy/core": "^4.4.4",
     "@uppy/xhr-upload": "^4.3.3",
-    "axios": "^1.8.4",
+    "axios": "^1.13.5",
     "dotenv": "^16.5.0",
     "jsdom": "^26.1.0",
     "lexical": "^0.30.0",
